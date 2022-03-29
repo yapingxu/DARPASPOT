@@ -1,0 +1,85 @@
+# # .csv file, use this
+# Greenhouse_SpectraData <- read.csv(file.choose())
+# If .txt tab file, use this
+Greenhouse_SpectraData <- read.delim(file.choose())
+
+set.seed(1234)
+dplyr::sample_n(Greenhouse_SpectraData, 10)
+#levels(Greenhouse_SpectraData$group)
+
+install.packages("reshape2")
+library(reshape2)
+melt(Greenhouse_SpectraData, id.vars = "wavelength", variable.name="Treatment", value.name="Reflectance")
+
+
+#____
+#Compute summary statistics by groups - count, mean, sd:
+library(dplyr)
+Greenhouse_Spectra_df <- plyr::rename(Greenhouse_SpectraData, 
+        c("Day16_JH_Plant1_NH4"  = "NH4",
+         "Day16_JH_Plant3_Control"  = "Control",
+         "Day16_JH_Plant4_NH4Nutrient" = "NH4_Nutrient"))
+dplyr::sample_n(Greenhouse_Spectra_df, 10)
+melt(Greenhouse_Spectra_df, id.vars = "wavelength", variable.name="Treatment", value.name="Reflectance")
+Greenhouse_Spectra<-melt(Greenhouse_Spectra_df, id.vars = "wavelength", variable.name="Treatment", value.name="Reflectance")
+
+
+average_df <- Greenhouse_Spectra %>% 
+  group_by(Treatment) %>%
+  dplyr::summarise(average_mean = mean(Reflectance),
+                   n = n(), 
+                   standard_deviation = sd(Reflectance),
+                   standard_high = average_mean + (2*standard_deviation),
+                   standard_low = average_mean - (2*standard_deviation))
+average_df
+
+average_df2 <- Greenhouse_Spectra %>% 
+  group_by(wavelength,Treatment) %>%
+  dplyr::summarise(average_mean = mean(Reflectance),
+                   n = n(), 
+                   standard_deviation = sd(Reflectance),
+                   standard_high = average_mean + (2*standard_deviation),
+                   standard_low = average_mean - (2*standard_deviation))
+average_df2
+
+#________group by wavelenth range
+Greenhouse_Spectra %>%
+  mutate(WavelengthRange = case_when(wavelength < 500 ~ 'blue',
+                                     wavelength> 500 & wavelength < 650 ~ 'green',
+                                     wavelength> 650 & wavelength < 700 ~ 'red',
+                                     wavelength> 700 & wavelength < 750 ~ 'red edge',
+                                     wavelength> 750 ~ 'near infrared'))
+Newdf<-Greenhouse_Spectra %>%
+  mutate(WavelengthRange = case_when(wavelength < 500 ~ 'blue',
+                                     wavelength> 500 & wavelength < 650 ~ 'green',
+                                     wavelength> 650 & wavelength < 700 ~ 'red',
+                                     wavelength> 700 & wavelength < 750 ~ 'red edge',
+                                     wavelength> 750 ~ 'near infrared'))
+average_Newdf <- Newdf %>% 
+  group_by(WavelengthRange,Treatment) %>%
+  dplyr::summarise(average_mean = mean(Reflectance),
+                   n = n(), 
+                   standard_deviation = sd(Reflectance),
+                   standard_high = average_mean + (2*standard_deviation),
+                   standard_low = average_mean - (2*standard_deviation))
+
+write.table(average_Newdf, file='G:\\Hyperspec Processing\\Greenhouse Hyperspec Scan\\SPOT_Greenhouse_11_24_2021\\summary.txt')
+average_Newdf
+#plot
+library(ggplot2)
+label <- paste(excitation, "nm excitation,", emission, "nm emission")
+ggplot(subset(Newdf, Treatment %in% c("NH4", "NH4_Nutrient", "Control")), aes(x=WavelengthRange, y=Reflectance, color=Treatment)) +
+  geom_point() +
+  # polynomial interpolation: https://www.datanovia.com/en/blog/how-to-plot-a-smooth-line-using-ggplot2/#:~:text=Key%20R%20function%3A%20geom_smooth()%20for,smoothed%20conditional%20means%20%2F%20regression%20line.&text=color%20%2C%20size%20and%20linetype%20%3A%20Change,color%20of%20the%20confidence%20region.
+  stat_smooth(method = "lm", se = FALSE, formula = y ~ poly(x, 3), data = average_Newdf %>% filter(Treatment %in% c("NH4", "NH4_Nutrient", "Control")), aes(x=WavelengthRange, y=average_mean, color=Treatment)) +
+  geom_line(data = average_Newdf %>% filter(Treatment %in% c("NH4", "NH4_Nutrient", "Control")), aes(x=WavelengthRange, y=standard_high, color=Treatment)) +
+  geom_line(data = average_Newdf %>% filter(Treatment %in% c("NH4", "NH4_Nutrient", "Control")), aes(x=WavelengthRange, y=standard_low, color=Treatment)) 
+
+#Compute one-way ANOVA test
+# Compute the analysis of variance
+res.anove <- aov(Reflectance ~ Treatment, data = Newdf)
+# Summary of the analysis
+summary(res.anove)
+#Interpret the result of one-way ANOVA tests
+tukeyanova<-TukeyHSD(res.anove)
+write.table(tukeyanova, file='G:\\Hyperspec Processing\\Greenhouse Hyperspec Scan\\SPOT_Greenhouse_11_24_2021\\anova.txt')
