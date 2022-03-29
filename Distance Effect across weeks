@@ -1,0 +1,153 @@
+library("openxlsx")
+path1<-"D:/Yaping Xu/SPOT/Field Data/20201218_DonorSet2_Chlorophyll.csv"
+DistanceData<-read.csv(path1,header=TRUE)
+dim(DistanceData)
+str(DistanceData)
+head(DistanceData)
+tail(DistanceData)
+path2<-"D:/Yaping Xu/SPOT/Field Data/20210128_filp_clean_donor2.csv"
+FILPData<-read.csv(path2,header=TRUE)
+str(FILPData)
+dim(FILPData)
+head(FILPData)
+tail(FILPData)
+summary(FILPData)
+FILPDataNoRB<-filter(FILPData, Purpose !="off site control")
+FILPDataNoRB<-filter(FILPData, Purpose!="off site control")
+FILPDataNoRB<-filter(FILPData, FILPData$Purpose !="off site control")
+dim(FILPDataNoRB)
+library(dplyr) #this is a very important line, without it the filter function goes to system default, failure.
+FILPDataNoRB<-filter(FILPData, Purpose!="off site control")
+dim(FILPDataNoRB)
+Distance_FILP_Merge<-merge(DistanceData,FILPDataNoRB,by=c("Plant_ID","Date"))
+dim(Distance_FILP_Merge)
+Distance_FILP_Merge<-merge(DistanceData,FILPDataNoRB,by=c("Replicate","Plant_ID","Date"))
+dim(Distance_FILP_Merge)
+str(Distance_FILP_Merge)
+head(Distance_FILP_Merge)
+tail(Distance_FILP_Merge)
+pairs(Distance_FILP_Merge[,c(7,8,30,34)])
+Distance_FILP_Merge.Ex405Em525<-filter(Distance_FILP_Merge, Excitation == "405" & Emission == "GFP")
+Distance_FILP_Merge.Ex405Em575<-filter(Distance_FILP_Merge, Excitation == "405" & Emission == "RFP")
+Distance_FILP_Merge.Ex405Em680<-filter(Distance_FILP_Merge, Excitation == "405" & Emission == "chlA")
+Distance_FILP_Merge.Ex405Em740<-filter(Distance_FILP_Merge, Excitation == "405" & Emission == "chlB")
+Distance_FILP_Merge.Ex465Em525<-filter(Distance_FILP_Merge, Excitation == "465" & Emission == "GFP")
+Distance_FILP_Merge.Ex465Em575<-filter(Distance_FILP_Merge, Excitation == "465" & Emission == "RFP")
+Distance_FILP_Merge.Ex465Em680<-filter(Distance_FILP_Merge, Excitation == "465" & Emission == "chlA")
+Distance_FILP_Merge.Ex465Em740<-filter(Distance_FILP_Merge, Excitation == "465" & Emission == "chlB")
+Distance_FILP_Merge.Ex525Em575<-filter(Distance_FILP_Merge, Excitation == "525" & Emission == "RFP")
+Distance_FILP_Merge.Ex525Em680<-filter(Distance_FILP_Merge, Excitation == "525" & Emission == "chlA")
+Distance_FILP_Merge.Ex525Em740<-filter(Distance_FILP_Merge, Excitation == "525" & Emission == "chlB")
+
+#______________________________________________________________________________________________________
+#Honeysuckle data analysis starts from here
+##Honeysuckle,Ex405Em525 data for all weeks
+Distance_FILP_Merge.Ex405Em525.AH<-filter(Distance_FILP_Merge.Ex405Em525, Species == "amur honeysuckle")
+###Honeysuckle,Ex405Em525 GFP data for week 1
+Distance_FILP_Merge.Ex405Em525.AH.Week1<-filter(Distance_FILP_Merge.Ex405Em525.AH, Date =="20200921"|
+                                      Date =="20200922"| Date =="20200923")
+dim(Distance_FILP_Merge.Ex405Em525.AH.Week1)
+###Alternative filter method: filtering by "Day".
+###For week 1:
+Distance_FILP_Merge.Ex405Em525.AH.Week1_test<-filter(Distance_FILP_Merge.Ex405Em525.AH, Day.x <= 7)
+dim(Distance_FILP_Merge.Ex405Em525.AH.Week1_test)
+pairs(Distance_FILP_Merge.Ex405Em525.AH.Week1[,c(7,8,30,34)])
+cor(Distance_FILP_Merge.Ex405Em525.AH.Week1$Distance.cm.,Distance_FILP_Merge.Ex405Em525.AH.Week1$Mean)
+cor(Distance_FILP_Merge.Ex405Em525.AH.Week1$Distance.cm.,Distance_FILP_Merge.Ex405Em525.AH.Week1$Chlorophyll)
+###For week 2:
+Distance_FILP_Merge.Ex405Em525.AH.Week2<-filter(Distance_FILP_Merge.Ex405Em525.AH, Day.x >7 & Day.x <= 14)
+dim(Distance_FILP_Merge.Ex405Em525.AH.Week2)
+pairs(Distance_FILP_Merge.Ex405Em525.AH.Week2[,c(7,8,30,34)])
+cor(Distance_FILP_Merge.Ex405Em525.AH.Week2$Distance.cm.,Distance_FILP_Merge.Ex405Em525.AH.Week2$Mean)
+cor(Distance_FILP_Merge.Ex405Em525.AH.Week2$Distance.cm.,Distance_FILP_Merge.Ex405Em525.AH.Week2$Chlorophyll)
+###For week 3:
+Distance_FILP_Merge.Ex405Em525.AH.Week3<-filter(Distance_FILP_Merge.Ex405Em525.AH, Day.x >7*2 & Day.x <= 7*3)
+dim(Distance_FILP_Merge.Ex405Em525.AH.Week3)
+pairs(Distance_FILP_Merge.Ex405Em525.AH.Week3[,c(7,8,30,34)])
+cor(Distance_FILP_Merge.Ex405Em525.AH.Week3$Distance.cm.,Distance_FILP_Merge.Ex405Em525.AH.Week3$Mean)
+cor(Distance_FILP_Merge.Ex405Em525.AH.Week3$Distance.cm.,Distance_FILP_Merge.Ex405Em525.AH.Week3$Chlorophyll)
+###For week 4:
+Distance_FILP_Merge.Ex405Em525.AH.Week4<-filter(Distance_FILP_Merge.Ex405Em525.AH, Day.x >7*3 & Day.x <= 7*4)
+dim(Distance_FILP_Merge.Ex405Em525.AH.Week4)
+pairs(Distance_FILP_Merge.Ex405Em525.AH.Week4[,c(7,8,30,34)])
+cor(Distance_FILP_Merge.Ex405Em525.AH.Week4$Distance.cm.,Distance_FILP_Merge.Ex405Em525.AH.Week4$Mean)
+cor(Distance_FILP_Merge.Ex405Em525.AH.Week4$Distance.cm.,Distance_FILP_Merge.Ex405Em525.AH.Week4$Chlorophyll)
+###For week 5:
+Distance_FILP_Merge.Ex405Em525.AH.Week5<-filter(Distance_FILP_Merge.Ex405Em525.AH, Day.x >7*4 & Day.x <= 7*5)
+dim(Distance_FILP_Merge.Ex405Em525.AH.Week5)
+pairs(Distance_FILP_Merge.Ex405Em525.AH.Week5[,c(7,8,30,34)])
+cor(Distance_FILP_Merge.Ex405Em525.AH.Week5$Distance.cm.,Distance_FILP_Merge.Ex405Em525.AH.Week5$Mean)
+cor(Distance_FILP_Merge.Ex405Em525.AH.Week5$Distance.cm.,Distance_FILP_Merge.Ex405Em525.AH.Week5$Chlorophyll)
+###For week 6:
+Distance_FILP_Merge.Ex405Em525.AH.Week6<-filter(Distance_FILP_Merge.Ex405Em525.AH, Day.x >7*5 & Day.x <= 7*6)
+dim(Distance_FILP_Merge.Ex405Em525.AH.Week6)
+pairs(Distance_FILP_Merge.Ex405Em525.AH.Week6[,c(7,8,30,34)])
+cor(Distance_FILP_Merge.Ex405Em525.AH.Week6$Distance.cm.,Distance_FILP_Merge.Ex405Em525.AH.Week6$Mean)
+cor(Distance_FILP_Merge.Ex405Em525.AH.Week6$Distance.cm.,Distance_FILP_Merge.Ex405Em525.AH.Week6$Chlorophyll)
+###For week 7:
+Distance_FILP_Merge.Ex405Em525.AH.Week7<-filter(Distance_FILP_Merge.Ex405Em525.AH, Day.x >7*6 & Day.x <= 7*7)
+dim(Distance_FILP_Merge.Ex405Em525.AH.Week7)
+pairs(Distance_FILP_Merge.Ex405Em525.AH.Week7[,c(7,8,30,34)])
+cor(Distance_FILP_Merge.Ex405Em525.AH.Week7$Distance.cm.,Distance_FILP_Merge.Ex405Em525.AH.Week7$Mean)
+cor(Distance_FILP_Merge.Ex405Em525.AH.Week7$Distance.cm.,Distance_FILP_Merge.Ex405Em525.AH.Week7$Chlorophyll)
+###For week 8:
+Distance_FILP_Merge.Ex405Em525.AH.Week8<-filter(Distance_FILP_Merge.Ex405Em525.AH, Day.x >7*7 & Day.x <= 7*8)
+dim(Distance_FILP_Merge.Ex405Em525.AH.Week8)
+pairs(Distance_FILP_Merge.Ex405Em525.AH.Week8[,c(7,8,30,34)])
+cor(Distance_FILP_Merge.Ex405Em525.AH.Week8$Distance.cm.,Distance_FILP_Merge.Ex405Em525.AH.Week8$Mean)
+cor(Distance_FILP_Merge.Ex405Em525.AH.Week8$Distance.cm.,Distance_FILP_Merge.Ex405Em525.AH.Week8$Chlorophyll)
+###For week 9:
+Distance_FILP_Merge.Ex405Em525.AH.Week9<-filter(Distance_FILP_Merge.Ex405Em525.AH, Day.x >7*8 & Day.x <= 7*9)
+dim(Distance_FILP_Merge.Ex405Em525.AH.Week9)
+pairs(Distance_FILP_Merge.Ex405Em525.AH.Week9[,c(7,8,30,34)])
+cor(Distance_FILP_Merge.Ex405Em525.AH.Week9$Distance.cm.,Distance_FILP_Merge.Ex405Em525.AH.Week9$Mean)
+cor(Distance_FILP_Merge.Ex405Em525.AH.Week9$Distance.cm.,Distance_FILP_Merge.Ex405Em525.AH.Week9$Chlorophyll)
+###For week 10:
+Distance_FILP_Merge.Ex405Em525.AH.Week10<-filter(Distance_FILP_Merge.Ex405Em525.AH, Day.x >7*9 & Day.x <= 7*10)
+dim(Distance_FILP_Merge.Ex405Em525.AH.Week10)
+pairs(Distance_FILP_Merge.Ex405Em525.AH.Week10[,c(7,8,30,34)])
+cor(Distance_FILP_Merge.Ex405Em525.AH.Week10$Distance.cm.,Distance_FILP_Merge.Ex405Em525.AH.Week10$Mean)
+cor(Distance_FILP_Merge.Ex405Em525.AH.Week10$Distance.cm.,Distance_FILP_Merge.Ex405Em525.AH.Week10$Chlorophyll)
+###For week 11:
+Distance_FILP_Merge.Ex405Em525.AH.Week11<-filter(Distance_FILP_Merge.Ex405Em525.AH, Day.x >7*10 & Day.x <= 7*11)
+dim(Distance_FILP_Merge.Ex405Em525.AH.Week11)
+pairs(Distance_FILP_Merge.Ex405Em525.AH.Week11[,c(7,8,30,34)])
+cor(Distance_FILP_Merge.Ex405Em525.AH.Week11$Distance.cm.,Distance_FILP_Merge.Ex405Em525.AH.Week11$Mean)
+cor(Distance_FILP_Merge.Ex405Em525.AH.Week11$Distance.cm.,Distance_FILP_Merge.Ex405Em525.AH.Week11$Chlorophyll)
+###For week 12:
+Distance_FILP_Merge.Ex405Em525.AH.Week12<-filter(Distance_FILP_Merge.Ex405Em525.AH, Day.x >7*11 & Day.x <= 7*12)
+dim(Distance_FILP_Merge.Ex405Em525.AH.Week12)
+pairs(Distance_FILP_Merge.Ex405Em525.AH.Week12[,c(7,8,30,34)])
+cor(Distance_FILP_Merge.Ex405Em525.AH.Week12$Distance.cm.,Distance_FILP_Merge.Ex405Em525.AH.Week12$Mean)
+cor(Distance_FILP_Merge.Ex405Em525.AH.Week12$Distance.cm.,Distance_FILP_Merge.Ex405Em525.AH.Week12$Chlorophyll)
+###For week 13:
+Distance_FILP_Merge.Ex405Em525.AH.Week13<-filter(Distance_FILP_Merge.Ex405Em525.AH, Day.x >7*12 & Day.x <= 7*13)
+dim(Distance_FILP_Merge.Ex405Em525.AH.Week13)
+pairs(Distance_FILP_Merge.Ex405Em525.AH.Week13[,c(7,8,30,34)])
+cor(Distance_FILP_Merge.Ex405Em525.AH.Week13$Distance.cm.,Distance_FILP_Merge.Ex405Em525.AH.Week13$Mean)
+cor(Distance_FILP_Merge.Ex405Em525.AH.Week13$Distance.cm.,Distance_FILP_Merge.Ex405Em525.AH.Week13$Chlorophyll)
+###For week 14:
+Distance_FILP_Merge.Ex405Em525.AH.Week14<-filter(Distance_FILP_Merge.Ex405Em525.AH, Day.x >7*13 & Day.x <= 7*14)
+dim(Distance_FILP_Merge.Ex405Em525.AH.Week14)
+pairs(Distance_FILP_Merge.Ex405Em525.AH.Week14[,c(7,8,30,34)])
+#Reprint week 5 Chlorophyll correlation
+cor(Distance_FILP_Merge.Ex405Em525.AH.Week5$Distance.cm.,Distance_FILP_Merge.Ex405Em525.AH.Week5$Chlorophyll)
+is.na(Distance_FILP_Merge.Ex405Em525.AH.Week5$Distance.cm.)
+is.na(Distance_FILP_Merge.Ex405Em525.AH.Week5$Chlorophyll)
+###Tell the correlation to ignore the NAs with use argument. 
+###The NA can be due to 2 reasons. One is that there is a NA in your data. 
+###Another one is due to there being one of the values being constant. 
+###This results in standard deviation being equal to zero and hence the cor function returns NA.
+cor(Distance_FILP_Merge.Ex405Em525.AH.Week5$Distance.cm.,Distance_FILP_Merge.Ex405Em525.AH.Week5$Chlorophyll, 
+    use = "complete.obs")
+
+
+###########################################################################
+###########################################################################
+###                                                                     ###
+###                        MAY_25_2021 ANALYSIS:                        ###
+###                       Donor 3 Distance Effect                       ###
+###                                                                     ###
+###########################################################################
+###########################################################################
+
