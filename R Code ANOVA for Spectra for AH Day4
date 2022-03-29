@@ -1,0 +1,316 @@
+# # .csv file, use this
+Greenhouse_SpectraData1 <- read.csv(file.choose())
+# If .txt tab file, use this
+Greenhouse_SpectraData <- read.delim(file.choose())
+
+##Open dataset 2 and 3 for comparison
+# # .csv file, use this
+Greenhouse_SpectraData2 <- read.csv(file.choose())
+# # .csv file, use this
+Greenhouse_SpectraData3 <- read.csv(file.choose())
+
+
+
+
+Greenhouse_SpectraData1 <- plyr::rename(Greenhouse_SpectraData1, 
+                                      c("leaf1"  = "plant1.leaf1",
+                                        "leaf2"  = "plant1.leaf2",
+                                        "leaf3"  = "plant1.leaf3",
+                                        "leaf4"  = "plant1.leaf4",
+                                        "leaf5"  = "plant1.leaf5",
+                                        "leaf6"  = "plant1.leaf6",
+                                        "leaf7"  = "plant1.leaf7",
+                                        "leaf8"  = "plant1.leaf8",
+                                        "leaf9"  = "plant1.leaf9",
+                                        "leaf10"  = "plant1.leaf10",
+                                        "leaf11"  = "plant1.leaf11",
+                                        "leaf12"  = "plant1.leaf12",
+                                        "leaf13"  = "plant1.leaf13",
+                                        "leaf14"  = "plant1.leaf14",
+                                        "leaf15"  = "plant1.leaf15",
+                                        "leaf16"  = "plant1.leaf16",
+                                        "leaf17"  = "plant1.leaf17",
+                                        "leaf18"  = "plant1.leaf18",
+                                        "leaf19"  = "plant1.leaf19",
+                                        "leaf20"  = "plant1.leaf20",
+                                        "leaf21"  = "plant1.leaf21",
+                                        "leaf22"  = "plant1.leaf22",
+                                        "leaf23"  = "plant1.leaf23",
+                                        "leaf24"  = "plant1.leaf24",
+                                        "leaf25"  = "plant1.leaf25",
+                                        "leaf26"  = "plant1.leaf26",
+                                        "leaf27"  = "plant1.leaf27",
+                                        "leaf28"  = "plant1.leaf28",
+                                        "leaf29"  = "plant1.leaf29",
+                                        "leaf30"  = "plant1.leaf30"))
+Greenhouse_SpectraData2 <- plyr::rename(Greenhouse_SpectraData2, 
+                                        c("Leaf1"  = "plant2.leaf1",
+                                          "Leaf2"  = "plant2.leaf2",
+                                          "Leaf3"  = "plant2.leaf3",
+                                          "Leaf4"  = "plant2.leaf4",
+                                          "Leaf5"  = "plant2.leaf5",
+                                          "Leaf6"  = "plant2.leaf6",
+                                          "Leaf7"  = "plant2.leaf7",
+                                          "Leaf8"  = "plant2.leaf8",
+                                          "Leaf9"  = "plant2.leaf9",
+                                          "Leaf10"  = "plant2.leaf10",
+                                          "Leaf11"  = "plant2.leaf11",
+                                          "Leaf12"  = "plant2.leaf12",
+                                          "Leaf13"  = "plant2.leaf13",
+                                          "Leaf14"  = "plant2.leaf14",
+                                          "Leaf15"  = "plant2.leaf15",
+                                          "Leaf16"  = "plant2.leaf16",
+                                          "Leaf17"  = "plant2.leaf17",
+                                          "Leaf18"  = "plant2.leaf18",
+                                          "Leaf19"  = "plant2.leaf19",
+                                          "Leaf20"  = "plant2.leaf20",
+                                          "Leaf21"  = "plant2.leaf21",
+                                          "Leaf22"  = "plant2.leaf22",
+                                          "Leaf23"  = "plant2.leaf23",
+                                          "Leaf24"  = "plant2.leaf24",
+                                          "Leaf25"  = "plant2.leaf25",
+                                          "Leaf26"  = "plant2.leaf26",
+                                          "Leaf27"  = "plant2.leaf27",
+                                          "Leaf28"  = "plant2.leaf28",
+                                          "Leaf29"  = "plant2.leaf29",
+                                          "Leaf30"  = "plant2.leaf30"))
+Greenhouse_SpectraData3 <- plyr::rename(Greenhouse_SpectraData3, 
+                                        c("Leaf1"  = "plant4.leaf1",
+                                          "Leaf2"  = "plant4.leaf2",
+                                          "Leaf3"  = "plant4.leaf3",
+                                          "Leaf4"  = "plant4.leaf4",
+                                          "Leaf5"  = "plant4.leaf5",
+                                          "Leaf6"  = "plant4.leaf6",
+                                          "Leaf7"  = "plant4.leaf7",
+                                          "Leaf8"  = "plant4.leaf8",
+                                          "Leaf9"  = "plant4.leaf9",
+                                          "Leaf10"  = "plant4.leaf10",
+                                          "Leaf11"  = "plant4.leaf11",
+                                          "Leaf12"  = "plant4.leaf12",
+                                          "Leaf13"  = "plant4.leaf13",
+                                          "Leaf14"  = "plant4.leaf14",
+                                          "Leaf15"  = "plant4.leaf15",
+                                          "Leaf16"  = "plant4.leaf16",
+                                          "Leaf17"  = "plant4.leaf17",
+                                          "Leaf18"  = "plant4.leaf18",
+                                          "Leaf19"  = "plant4.leaf19",
+                                          "Leaf20"  = "plant4.leaf20",
+                                          "Leaf21"  = "plant4.leaf21",
+                                          "Leaf22"  = "plant4.leaf22",
+                                          "Leaf23"  = "plant4.leaf23",
+                                          "Leaf24"  = "plant4.leaf24",
+                                          "Leaf25"  = "plant4.leaf25",
+                                          "Leaf26"  = "plant4.leaf26",
+                                          "Leaf27"  = "plant4.leaf27",
+                                          "Leaf28"  = "plant4.leaf28",
+                                          "Leaf29"  = "plant4.leaf29",
+                                          "Leaf30"  = "plant4.leaf30"))
+
+###Merge dataframe 1,2,and 3
+# merge three data frames by ID "wavelength"
+library(dplyr)
+dfmerge <- inner_join(Greenhouse_SpectraData1,Greenhouse_SpectraData2)
+dfmerge <- inner_join(dfmerge,Greenhouse_SpectraData3)
+# dplyr::sample_n(dfmerge, 10)
+
+set.seed(1234)
+dplyr::sample_n(dfmerge, 10)
+
+install.packages("reshape2")
+library(reshape2)
+#melt(dfmerge, id.vars = "ï..wavelength", variable.name="Treatment", value.name="Reflectance")
+#rename column
+dfrename <- plyr::rename(dfmerge, 
+                                      c("ï..wavelength" = "wavelength",
+                                        "plant1.leaf1"  = "Decomp",
+                                        "plant1.leaf2"  = "Decomp",
+                                        "plant1.leaf3"  = "Decomp",
+                                        "plant1.leaf4"  = "Decomp",
+                                        "plant1.leaf5"  = "Decomp",
+                                        "plant1.leaf6"  = "Decomp",
+                                        "plant1.leaf7"  = "Decomp",
+                                        "plant1.leaf8"  = "Decomp",
+                                        "plant1.leaf9"  = "Decomp",
+                                        "plant1.leaf10"  = "Decomp",
+                                        "plant1.leaf11"  = "Decomp",
+                                        "plant1.leaf12"  = "Decomp",
+                                        "plant1.leaf13"  = "Decomp",
+                                        "plant1.leaf14"  = "Decomp",
+                                        "plant1.leaf15"  = "Decomp",
+                                        "plant1.leaf16"  = "Decomp",
+                                        "plant1.leaf17"  = "Decomp",
+                                        "plant1.leaf18"  = "Decomp",
+                                        "plant1.leaf19"  = "Decomp",
+                                        "plant1.leaf20"  = "Decomp",
+                                        "plant1.leaf21"  = "Decomp",
+                                        "plant1.leaf22"  = "Decomp",
+                                        "plant1.leaf23"  = "Decomp",
+                                        "plant1.leaf24"  = "Decomp",
+                                        "plant1.leaf25"  = "Decomp",
+                                        "plant1.leaf26"  = "Decomp",
+                                        "plant1.leaf27"  = "Decomp",
+                                        "plant1.leaf28"  = "Decomp",
+                                        "plant1.leaf29"  = "Decomp",
+                                        "plant1.leaf30"  = "Decomp",
+                                        "plant2.leaf1"  = "HalfDecomp",
+                                        "plant2.leaf2"  = "HalfDecomp",
+                                        "plant2.leaf3"  = "HalfDecomp",
+                                        "plant2.leaf4"  = "HalfDecomp",
+                                        "plant2.leaf5"  = "HalfDecomp",
+                                        "plant2.leaf6"  = "HalfDecomp",
+                                        "plant2.leaf7"  = "HalfDecomp",
+                                        "plant2.leaf8"  = "HalfDecomp",
+                                        "plant2.leaf9"  = "HalfDecomp",
+                                        "plant2.leaf10"  = "HalfDecomp",
+                                        "plant2.leaf11"  = "HalfDecomp",
+                                        "plant2.leaf12"  = "HalfDecomp",
+                                        "plant2.leaf13"  = "HalfDecomp",
+                                        "plant2.leaf14"  = "HalfDecomp",
+                                        "plant2.leaf15"  = "HalfDecomp",
+                                        "plant2.leaf16"  = "HalfDecomp",
+                                        "plant2.leaf17"  = "HalfDecomp",
+                                        "plant2.leaf18"  = "HalfDecomp",
+                                        "plant2.leaf19"  = "HalfDecomp",
+                                        "plant2.leaf20"  = "HalfDecomp",
+                                        "plant2.leaf21"  = "HalfDecomp",
+                                        "plant2.leaf22"  = "HalfDecomp",
+                                        "plant2.leaf23"  = "HalfDecomp",
+                                        "plant2.leaf24"  = "HalfDecomp",
+                                        "plant2.leaf25"  = "HalfDecomp",
+                                        "plant2.leaf26"  = "HalfDecomp",
+                                        "plant2.leaf27"  = "HalfDecomp",
+                                        "plant2.leaf28"  = "HalfDecomp",
+                                        "plant2.leaf29"  = "HalfDecomp",
+                                        "plant2.leaf30"  = "HalfDecomp",
+                                        "plant4.leaf1"  = "Control",
+                                        "plant4.leaf2"  = "Control",
+                                        "plant4.leaf3"  = "Control",
+                                        "plant4.leaf4"  = "Control",
+                                        "plant4.leaf5"  = "Control",
+                                        "plant4.leaf6"  = "Control",
+                                        "plant4.leaf7"  = "Control",
+                                        "plant4.leaf8"  = "Control",
+                                        "plant4.leaf9"  = "Control",
+                                        "plant4.leaf10"  = "Control",
+                                        "plant4.leaf11"  = "Control",
+                                        "plant4.leaf12"  = "Control",
+                                        "plant4.leaf13"  = "Control",
+                                        "plant4.leaf14"  = "Control",
+                                        "plant4.leaf15"  = "Control",
+                                        "plant4.leaf16"  = "Control",
+                                        "plant4.leaf17"  = "Control",
+                                        "plant4.leaf18"  = "Control",
+                                        "plant4.leaf19"  = "Control",
+                                        "plant4.leaf20"  = "Control",
+                                        "plant4.leaf21"  = "Control",
+                                        "plant4.leaf22"  = "Control",
+                                        "plant4.leaf23"  = "Control",
+                                        "plant4.leaf24"  = "Control",
+                                        "plant4.leaf25"  = "Control",
+                                        "plant4.leaf26"  = "Control",
+                                        "plant4.leaf27"  = "Control",
+                                        "plant4.leaf28"  = "Control",
+                                        "plant4.leaf29"  = "Control",
+                                        "plant4.leaf30"  = "Control"
+                                       ))
+
+
+
+#melt(dfrename, id.vars = "i..wavelength", variable.name="Treatment", value.name="Reflectance")
+dfmelt<-melt(dfrename, id.vars = "wavelength", variable.name="Treatment", value.name="Reflectance")
+library(dplyr)
+
+average_df <- dfmelt %>% 
+  group_by(Treatment) %>%
+  dplyr::summarise(average_mean = mean(Reflectance),
+                   n = n(), 
+                   standard_deviation = sd(Reflectance),
+                   standard_high = average_mean + (2*standard_deviation),
+                   standard_low = average_mean - (2*standard_deviation))
+average_df
+
+average_df2 <- dfmelt %>% 
+  group_by(wavelength,Treatment) %>%
+  dplyr::summarise(average_mean = mean(Reflectance),
+                   n = n(), 
+                   standard_deviation = sd(Reflectance),
+                   standard_high = average_mean + (2*standard_deviation),
+                   standard_low = average_mean - (2*standard_deviation))
+average_df2
+# 
+# average_df3 <- dfmelt %>% 
+#   summarise_at(c("wavelength","Treatment"),average_mean = mean(dfmelt$Reflectance),
+#                standard_deviation = sd(dfmelt$Reflectance))
+
+
+###Group bands to five groups, use mutate to add a new column called wavelengthrange
+Newdf<-dfmelt %>%
+  mutate(WavelengthRange = case_when(wavelength < 500 ~ 'blue',
+                                     wavelength> 500 & wavelength < 600 ~ 'green',
+                                     wavelength> 600 & wavelength < 700 ~ 'red',
+                                     wavelength> 700 & wavelength < 750 ~ 'red edge',
+                                     wavelength> 750 ~ 'near infrared'))
+average_Newdf <- Newdf %>% 
+  group_by(WavelengthRange,Treatment) %>%
+  dplyr::summarise(average_mean = mean(Reflectance),
+                   n = n(), 
+                   standard_deviation = sd(Reflectance),
+                   standard_high = average_mean + (2*standard_deviation),
+                   standard_low = average_mean - (2*standard_deviation))
+write.table(average_Newdf, file='E:\\Hyperspec Data Processing (SpectrononPro)\\SPOT\\Greenhouse\\Day4\\SPOT_Greenhouse_11_12_2021_Reflectance (new)\\summaryAH.txt')
+average_Newdf
+
+library(ggplot2)
+
+ggplot(subset(Newdf, Treatment %in% c("Decomp", "HalfDecomp", "Control")), aes(x=WavelengthRange, y=Reflectance, color=Treatment)) +
+  geom_point() +
+  # polynomial interpolation: https://www.datanovia.com/en/blog/how-to-plot-a-smooth-line-using-ggplot2/#:~:text=Key%20R%20function%3A%20geom_smooth()%20for,smoothed%20conditional%20means%20%2F%20regression%20line.&text=color%20%2C%20size%20and%20linetype%20%3A%20Change,color%20of%20the%20confidence%20region.
+  stat_smooth(method = "lm", se = FALSE, formula = y ~ poly(x, 3), data = Newdf %>% filter(Treatment %in% c("Decomp", "HalfDecomp", "Control")), aes(x=WavelengthRange, y=Reflectance, color=Treatment)) +
+  geom_line(data = Newdf %>% filter(Treatment %in% c("Decomp", "HalfDecomp", "Control")), aes(x=WavelengthRange, y=Reflectance, color=Treatment)) +
+  geom_line(data = Newdf %>% filter(Treatment %in% c("Decomp", "HalfDecomp", "Control")), aes(x=WavelengthRange, y=Reflectance, color=Treatment)) 
+
+#Compute one-way ANOVA test
+# Compute the analysis of variance
+res.anove <- aov(Reflectance ~ Treatment, data = Newdf)
+# Summary of the analysis
+summary(res.anove)
+#Interpret the result of one-way ANOVA tests
+TukeyHSD(res.anove)
+
+
+#Do not group bands
+library(data.table)
+dfmelt_test<-data.table::melt(dfrename, id.vars = "wavelength", variable.name="Treatment", value.name="Reflectance")
+#transpose
+dftranspose<- t(dfmerge)
+
+#boxplot and t-test
+for (i in 1:231) { # variables to compare are variables 1 to 4
+  boxplot(dat[, i] ~ dftranspose$Species, # draw boxplots by group
+          ylab = names(dat[i]), # rename y-axis with variable's name
+          xlab = "Species"
+  )
+
+library(ggplot2)
+
+ggplot(dfmelt, aes(x=wavelength, y=Reflectance, color=Treatment)) +
+  geom_point() +
+  # polynomial interpolation: https://www.datanovia.com/en/blog/how-to-plot-a-smooth-line-using-ggplot2/#:~:text=Key%20R%20function%3A%20geom_smooth()%20for,smoothed%20conditional%20means%20%2F%20regression%20line.&text=color%20%2C%20size%20and%20linetype%20%3A%20Change,color%20of%20the%20confidence%20region.
+  
+  geom_line(data = dfmelt %>% filter(Treatment %in% c("Decomp", "HalfDecomp", "Control")), aes(x=wavelength, y=Reflectance, color=Treatment)) +
+  geom_line(data = dfmelt %>% filter(Treatment %in% c("Decomp", "HalfDecomp", "Control")), aes(x=wavelength, y=Reflectance, color=Treatment)) 
+
+#Compute one-way ANOVA test
+# Compute the analysis of variance
+res.anove_allbands <- aov(Reflectance ~ Treatment, data = dfmelt)
+
+
+# Summary of the analysis
+summary(res.anove_allbands)
+#Interpret the result of one-way ANOVA tests
+TukeyHSD(res.anove_allbands)
+# ANOVA over bands
+res.anove_whichbandisgood<- aov(Reflectance ~ wavelength, data = dfmelt)
+# Summary of the analysis
+summary(res.anove_whichbandisgood)
+TukeyHSD(res.anove_whichbandisgood)
