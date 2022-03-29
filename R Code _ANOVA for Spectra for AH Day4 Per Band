@@ -1,0 +1,142 @@
+# # .csv file, use this
+Greenhouse_SpectraData1 <- read.csv(file.choose(),fileEncoding="UTF-8-BOM")
+#transpose, notes: leaf sample is row 1, after transpose, will not generate a column name for the leaf column.
+Greenhouse_SpectraData1_tr<- t(Greenhouse_SpectraData1)
+library(dplyr)
+#add a "decomp" lable as a new column
+Treatment<-rep("Decomp",length=231)
+df<-cbind(Greenhouse_SpectraData1_tr,Treatment)
+df1<-df[2:31,]           
+
+Greenhouse_SpectraData2 <- read.csv(file.choose(),fileEncoding="UTF-8-BOM")
+#transpose
+Greenhouse_SpectraData2_tr<- t(Greenhouse_SpectraData2)
+library(dplyr)
+#add a "halfdecomp" lable as a new column
+Treatment<-rep("HalfDecomp",length=231)
+df<-cbind(Greenhouse_SpectraData2_tr,Treatment)
+df2<-df[2:31,]  
+
+Greenhouse_SpectraData3 <- read.csv(file.choose(),fileEncoding="UTF-8-BOM")
+#transpose
+Greenhouse_SpectraData3_tr<- t(Greenhouse_SpectraData3)
+library(dplyr)
+#add a "control" lable as a new column
+Treatment<-rep("Control",length=231)
+df<-cbind(Greenhouse_SpectraData3_tr,Treatment)
+df3<-df[2:31,]  
+
+###merge three df vertically
+dfmerge1<-rbind(df1,df2)
+dfmerge<-rbind(dfmerge1,df3)
+dfmerge.df<- data.frame(dfmerge)
+write.csv(dfmerge.df,"E:\\Hyperspec Data Processing (SpectrononPro)\\SPOT\\Greenhouse\\Day4\\SPOT_Greenhouse_11_12_2021_Reflectance (new)\\dfmergedf.csv")
+dfmergefinal <- read.csv(file.choose())
+
+###box plot two random columns, just to test the code. Use V1 and V2.
+###Box not plotted due to large variabtion in the data
+###not useful for all 231 bands
+install.packages("gridExtra")
+library(gridExtra)
+library(ggplot2)
+p1 <- ggplot(dfmerge.df, aes(x = Treatment, y = V1, fill = Treatment)) + geom_boxplot(outlier.shape = NA) + geom_jitter(width = 0.1) + theme(legend.position="top")
+p2 <- ggplot(dfmerge.df, aes(x = Treatment, y = V2, fill = Treatment)) + geom_boxplot(outlier.shape = NA) + geom_jitter(width = 0.1) + theme(legend.position="top")
+grid.arrange(p1, p2, ncol=2)
+
+
+##manova
+vars <- cbind(dfmergefinal$V1,dfmergefinal$V2,dfmergefinal$V3,dfmergefinal$V4,dfmergefinal$V100,dfmergefinal$V200, dfmergefinal$V231)
+manovaallbands <- manova(vars ~ Treatment, dfmergefinal)
+summary(manovaallbands)
+# plot mnova 
+plot_lda <- data.frame(manovaallbands[, "Treatment"], lda = predict(post_hoc)$x)
+ggplot(plot_lda) + geom_point(aes(x = lda.LD1, y = lda.LD2),color = Treatment, size = 4)
+
+is.atomic(dfmerge.df)
+is.recursive(dfmerge.df)
+is.atomic(vars)
+
+##_______________
+#manova test on subset, for debug purpose
+dfsubset<-dfmerge.df[,230:232]
+##manova
+res.manovatest <- manova(cbind(V230,V231) ~ Treatment, dfsubset)
+dfrename <- plyr::rename(dfsubset, 
+                         c("V230"="Band230",
+                           "V231"="Band231"
+                         ))
+write.csv(dfrename,"E:\\Hyperspec Data Processing (SpectrononPro)\\SPOT\\Greenhouse\\Day4\\SPOT_Greenhouse_11_12_2021_Reflectance (new)\\TestforANOVA.csv")
+TestDataAnova <- read.csv(file.choose())
+##_________________________
+
+##manova, not significant
+res.manova <- manova(cbind(Band230,Band231) ~ Treatment, TestDataAnova)
+summary(res.manova)
+
+library(MASS)
+
+BandOptions<-cbind(TestDataAnova$Band230,TestDataAnova$Band231)
+post_hoc <- lda(TestDataAnova$Treatment ~ BandOptions, CV=F)
+post_hoc
+predict(post_hoc)
+# plot linear discriminant analysis, not useful
+plot_lda <- data.frame(TestDataAnova[, "Treatment"], lda = predict(post_hoc)$x)
+ggplot(plot_lda) + geom_point(aes(x = lda.LD1, y = lda.LD2),color = Treatment, size = 4)
+
+##post hoc analysis using linear discriminant analysis, not useful
+post_hoc2 <- lda(BandOptions ~ TestDataAnova$Treatment, CV=F)
+post_hoc
+nrow(TestDataAnova$Treatment)
+length(BandOptions)
+
+#####melt table to 30 samples * 3 treatments per band
+library(data.table)
+dfBandAsy<-melt(dfmergefinal, id.vars = c("Treatment","ID"), variable.name="Band", value.name="Reflectance")
+#six sub samples
+dfBandAsy_subset1<-dfBandAsy[1:3600,]
+dfBandAsy_subset2<-dfBandAsy[3601:7200,]
+dfBandAsy_subset3<-dfBandAsy[7201:10800,]
+dfBandAsy_subset4<-dfBandAsy[10801:14400,]
+dfBandAsy_subset5<-dfBandAsy[14401:18000,]
+dfBandAsy_subset6<-dfBandAsy[18001:20790,]
+
+##Plot three treatments together, devide into six sub-plots due to large data size
+ggplot(dfBandAsy_subset1, aes(x = Band, y = Reflectance, color = Treatment)) +  # ggplot function
+  geom_boxplot()
+ggplot(dfBandAsy_subset2, aes(x = Band, y = Reflectance, color = Treatment)) +  # ggplot function
+  geom_boxplot()
+ggplot(dfBandAsy_subset3, aes(x = Band, y = Reflectance, color = Treatment)) +  # ggplot function
+  geom_boxplot()
+ggplot(dfBandAsy_subset4, aes(x = Band, y = Reflectance, color = Treatment)) +  # ggplot function
+  geom_boxplot()
+ggplot(dfBandAsy_subset5, aes(x = Band, y = Reflectance, color = Treatment)) +  # ggplot function
+  geom_boxplot()
+ggplot(dfBandAsy_subset6, aes(x = Band, y = Reflectance, color = Treatment)) +  # ggplot function
+  geom_boxplot()
+
+summaryperband<-aggregate(Reflectance ~ Band + Treatment, data=dfBandAsy, FUN=mean)
+write.csv(summaryperband,"E:\\Hyperspec Data Processing (SpectrononPro)\\SPOT\\Greenhouse\\Day4\\SPOT_Greenhouse_11_12_2021_Reflectance (new)\\summaryperband.csv")
+
+#__________________________________________________
+###boxplot for two columns, Band28 and Band5
+install.packages("gridExtra")
+library(gridExtra)
+library(ggplot2)
+p3 <- ggplot(dfmergefinal, aes(x = Treatment, y = V28, fill = Treatment)) + geom_boxplot(outlier.shape = NA) + geom_jitter(width = 0.1) + theme(legend.position="top")
+p4 <- ggplot(dfmergefinal, aes(x = Treatment, y = V5, fill = Treatment)) + geom_boxplot(outlier.shape = NA) + geom_jitter(width = 0.1) + theme(legend.position="top")
+grid.arrange(p3, p4, ncol=2)
+#_________________________________________________________
+#Compute one-way ANOVA test for the two most significant bands Band 28 and Band5
+# Compute the analysis of variance for band 28
+res.anoveBand28 <- aov(V28 ~ Treatment, data = dfmergefinal)
+# Summary of the analysis
+summary(res.anoveBand28)
+#Interpret the result of one-way ANOVA tests
+TukeyHSD(res.anoveBand28)
+#Compute one-way ANOVA test for band 5
+# Compute the analysis of variance
+res.anoveBand5 <- aov(V5 ~ Treatment, data = dfmergefinal)
+# Summary of the analysis
+summary(res.anoveBand5)
+#Interpret the result of one-way ANOVA tests
+TukeyHSD(res.anoveBand5)
